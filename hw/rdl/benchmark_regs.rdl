@@ -1,0 +1,12 @@
+addrmap benchmark_regs{
+    reg {
+        name = "Benchmark registers";
+
+        field {
+            sw = rw;
+            hw = r;
+        } val[31:0] = 0;
+
+    } REGS_ARR[256] @ 0x000;
+
+};

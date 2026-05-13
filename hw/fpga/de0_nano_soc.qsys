@@ -9,12 +9,36 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element benchmark_controller_0
+   {
+      datum _sortIndex
+      {
+         value = "3";
+         type = "int";
+      }
+   }
+   element benchmark_controller_0.avalon_slave
+   {
+      datum baseAddress
+      {
+         value = "65536";
+         type = "String";
+      }
+   }
    element clk
    {
       datum _sortIndex
       {
          value = "0";
          type = "int";
+      }
+   }
+   element de0_nano_soc
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
       }
    }
    element de0_nano_soc
@@ -87,6 +111,11 @@
  <interface name="hps_io" internal="hps.hps_io" type="conduit" dir="end" />
  <interface name="memory" internal="hps.memory" type="conduit" dir="end" />
  <interface name="reset" internal="clk.clk_in_reset" type="reset" dir="end" />
+ <module
+   name="benchmark_controller_0"
+   kind="benchmark_controller"
+   version="1.0"
+   enabled="1" />
  <module name="clk" kind="clock_source" version="25.1" enabled="1">
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="clockFrequencyKnown" value="true" />
@@ -664,12 +693,26 @@
    kind="avalon"
    version="25.1"
    start="hps.h2f_lw_axi_master"
+   end="benchmark_controller_0.avalon_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00010000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="25.1"
+   start="hps.h2f_lw_axi_master"
    end="ocm.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection kind="clock" version="25.1" start="clk.clk" end="ocm.clk1" />
+ <connection
+   kind="clock"
+   version="25.1"
+   start="clk.clk"
+   end="benchmark_controller_0.clock" />
  <connection kind="clock" version="25.1" start="clk.clk" end="hps.f2h_axi_clock" />
  <connection
    kind="clock"
@@ -682,6 +725,11 @@
    version="25.1"
    start="clk.clk"
    end="hps.h2f_lw_axi_clock" />
+ <connection
+   kind="reset"
+   version="25.1"
+   start="clk.clk_reset"
+   end="benchmark_controller_0.reset" />
  <connection kind="reset" version="25.1" start="clk.clk_reset" end="ocm.reset1" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
